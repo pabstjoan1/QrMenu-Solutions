@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Digitales Restaurant Menü</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR"></script>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <header>
+            <h1 id="restaurantName">Laden...</h1>
+            <div id="tableLabel" class="table-badge" onclick="openTableModal()" style="cursor: pointer;">Tisch --</div>
+        </header>
+
+        <div class="category-nav" id="categoryNav"></div>
+
+        <main class="menu-grid" id="menuGrid"></main>
+
+        <nav class="bottom-nav">
+            <div class="nav-item" onclick="filterCategory('Alle')">
+                <i class="fa-solid fa-utensils"></i>
+                <span>Menü</span>
+            </div>
+            <div class="nav-item" onclick="togglePopup('waiterMenu')">
+                <i class="fa-solid fa-bell"></i>
+                <span>Service</span>
+            </div>
+            <div class="nav-item" onclick="togglePopup('payMenu')">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Zahlen</span>
+            </div>
+            <div class="nav-item" onclick="toggleCart()">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <span>Warenkorb</span>
+                <span class="cart-badge" id="cartCount">0</span>
+            </div>
+        </nav>
+
+        <div id="tableModal" class="modal-backdrop" style="display: none;">
+            <div class="modal-content">
+                <h2>Willkommen!</h2>
+                <p>Bitte gib deine Tischnummer ein:</p>
+                <div class="table-input-wrapper">
+                    <input type="number" id="tableInput" placeholder="Z.B. 5" min="1">
+                </div>
+                <button class="btn-save-table" onclick="saveTableNumber()">Speichern & Weiter</button>
+            </div>
+        </div>
+
+        <div id="waiterMenu" class="action-popup" style="display: none;">
+            <h3 style="margin-bottom: 10px; text-align: center;">Service anfordern</h3>
+            <button onclick="waiterAction('Kellner rufen')">🙋‍♂️ Kellner rufen</button>
+            <button onclick="waiterAction('Rechnung anfordern')">🧾 Rechnung bringen</button>
+            <button style="background: #e2e8f0; color: #333;" onclick="togglePopup('waiterMenu')">Abbrechen</button>
+        </div>
+
+        <div id="payMenu" class="action-popup" style="display: none;">
+            <h3 style="margin-bottom: 10px; text-align: center;">Wie möchtest du zahlen?</h3>
+            <button onclick="pay('Bar')">💵 Bar beim Kellner</button>
+            <button onclick="pay('PayPal')">🔵 PayPal / Kreditkarte online</button>
+            <div id="paypal-button-container" style="margin-top: 10px;"></div>
+            <button style="background: #e2e8f0; color: #333; margin-top: 10px;" onclick="togglePopup('payMenu')">Abbrechen</button>
+        </div>
+
+        <div class="cart-backdrop" id="cartBackdrop" onclick="toggleCart()" style="display: none;"></div>
+        <div class="cart-drawer" id="cartOverlay" style="display: none;">
+            <div class="cart-header">
+                <h3>Deine Auswahl</h3>
+                <button class="close-cart" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-content" id="cartList"></div>
+            <div class="cart-footer">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold;">
+                    <span>Gesamtbetrag:</span>
+                    <span id="totalPrice">0.00 €</span>
+                </div>
+                <button class="btn-checkout" onclick="checkout()">Jetzt kostenpflichtig bestellen</button>
+            </div>
+        </div>
+
+        <div id="toastBox"></div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
